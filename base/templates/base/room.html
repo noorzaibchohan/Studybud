@@ -1,0 +1,136 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<main class="profile-page layout layout--2">
+  <div class="container">
+    <!-- Room Start -->
+    <div class="room">
+      <div class="room__top">
+        <div class="room__topLeft">
+          <a href="{% url 'home' %}">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>arrow-left</title>
+              <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z"
+              ></path>
+            </svg>
+          </a>
+          <h3>Study Room</h3>
+        </div>
+
+        {% if room.host == request.user %}
+        <div class="room__topRight">
+          <a href="{% url 'update_room' room.id %}">
+            <svg
+              enable-background="new 0 0 24 24"
+              height="32"
+              viewBox="0 0 24 24"
+              width="32"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>edit</title>
+              <!-- SVG Path for Edit Icon -->
+              <path d="M3 17.25v3.75h3.75l10.81-10.81-3.75-3.75zm18.71-9.59a.996.996 0 0 0-1.41 0L18 10.56l3.75 3.75L24 11.44a.996.996 0 0 0 0-1.41l-2.29-2.29z"></path>
+
+            </svg>
+          </a>
+          <a href="{% url 'delete_room' room.id %}">
+          
+            <svg
+              enable-background="new 0 0 24 24"
+              height="32"
+              viewBox="0 0 24 24"
+              width="32"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M19 6h-4l-1-1h-4l-1 1H5c-1.104 0-2 .896-2 2v12c0 1.104.896 2 2 2h14c1.104 0 2-.896 2-2V8c0-1.104-.896-2-2-2zM9 16h2v-2H9v2zm0-4h2V8H9v4zm4 4h2v-2h-2v2zm0-4h2V8h-2v4zm4 4h2v-2h-2v2zm0-4h2V8h-2v4z"></path>
+              <title>delete</title>
+      
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      <div class="room__box scroll">
+        <div class="room__header scroll">
+          <div class="room__info">
+            <h3>{{ room.name }}</h3>
+            <span>{{ room.created|timesince }} ago</span>
+          </div>
+          <div class="room__hosted">
+            <p>Hosted By</p>
+            <a href="{% url 'user_profile' room.host.id %}" class="room__author">
+              <div class="avatar avatar--small">
+                <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+              </div>
+              <span>@{{ room.host.username }}</span>
+            </a>
+          </div>
+          <span class="room__topics">{{ room.topic }}</span>
+        </div>
+        <div class="room__conversation">
+          <div class="threads scroll">
+            {% for message in room_messages %}
+            <div class="thread">
+              <div class="thread__top">
+                <div class="thread__author">
+                  <a href="{% url 'user_profile' message.user.id %}" class="thread__authorInfo">
+                    <div class="avatar avatar--small">
+                      <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+                    </div>
+                    <span>@{{ message.user.username }}</span>
+                  </a>
+                  <span class="thread__date">{{ message.created|timesince }} ago</span>
+                </div>
+                {% if request.user == message.user %}
+                <a href="{% url 'delete_message' message.id %}">
+                  <div class="thread__delete">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                      <title>remove</title>
+                      <!-- SVG Path for Delete Icon -->
+                    </svg>
+                  </div>
+                </a>
+                {% endif %}
+              </div>
+              <div class="thread__details">
+                {{ message.body }}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      
+      <div class="room__message">
+        <form action="{% url 'room_message_create' room.id %}" method="post">
+          {% csrf_token %}
+          <input name="body" placeholder="Write your message here..." />
+          
+        </form>
+      </div>
+    </div>
+    <!-- Room End -->
+
+    <!-- Participants -->
+    <div class="participants">
+      <h3 class="participants__top">Participants <span>({{ participants.count }} Joined)</span></h3>
+      <div class="participants__list scroll">
+        {% for user in participants %}
+        <a href="{% url 'user_profile' user.id %}" class="participant">
+          <div class="avatar avatar--medium">
+            <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+          </div>
+          <p>
+            {{ user.username }}
+            <span>@{{ user.username }}</span>
+          </p>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- Participants End -->
+  </div>
+</main>
+
+{% endblock content %}
