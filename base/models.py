@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
-    
-    
     #Renames the instances of the model with the name field.
     def __str__(self):
         return self.name
@@ -20,8 +18,6 @@ class Room(models.Model):
     participants = models.ManyToManyField(User, related_name='participants', blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add= True) 
-    
-    
 
     class Meta:
         ordering = ['-updated','-created']

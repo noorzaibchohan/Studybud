@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.gitlab',
     
     'django_celery_results',
+    'rest_framework',
     
     
 ]
